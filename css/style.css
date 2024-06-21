@@ -44,8 +44,8 @@ body {
  animation: shift 2s ;
  margin-top:125px;
  text-align:center;
- text-transform:uppercase;
 }
+
 h2 {
  animation: appear 3.2s;
  text-align:center;
@@ -63,6 +63,39 @@ h2 {
  0% {opacity:0;}
  50% {opacity:0;}
  100% {opacity:1;}
+}
+
+ul {
+  animation: appear 3.8s;
+  display: flex;
+  gap: .8em;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0 20vw;
+  padding: 5px
+}
+
+ul li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  text-align: center;
+  border-radius: 25px;
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+
+ul li:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+ul li.active {
+  background-color: #001F54;
+  border: 2px solid white;
 }
 
 .hidden {
