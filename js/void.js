@@ -57,9 +57,21 @@ function initialiseSoundSource() {
     source.start();
 }
 
+// open the void
+const openBtn = document.getElementById('open');
+const startSection = document.getElementById('start');
+const voidSection = document.getElementById('void');
+
+openBtn.addEventListener('click', () => {
+    startSection.classList.add('hidden');
+    voidSection.classList.remove('hidden');
+})
+
 // play
 const playButton = document.getElementById('play-btn');
+console.log(playButton)
 playButton.addEventListener('click', () => {
+    console.log('click')
     ctx = new AudioContext();
     initialiseSoundSource();
     gainNodeLeft.gain.setValueAtTime(gainVal, ctx.currentTime);
