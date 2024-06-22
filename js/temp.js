@@ -21,12 +21,12 @@ openBtn.addEventListener('click', () => {
         initSoundSource(i);
         btn.addEventListener('click', () => {
             if(!isPlaying[i]){
-                gainNodesLeft[i].gain.setValueAtTime(1, ctx.currentTime);
-                gainNodesRight[i].gain.setValueAtTime(1, ctx.currentTime);
+                gainNodesLeft[i].gain.linearRampToValueAtTime(1, ctx.currentTime + 0.05);
+                gainNodesRight[i].gain.linearRampToValueAtTime(1, ctx.currentTime + 0.05);
                 isPlaying[i] = true;
             } else {
-                gainNodesLeft[i].gain.setValueAtTime(0, ctx.currentTime);
-                gainNodesRight[i].gain.setValueAtTime(0, ctx.currentTime);
+                gainNodesLeft[i].gain.linearRampToValueAtTime(0, ctx.currentTime + 0.05);
+                gainNodesRight[i].gain.linearRampToValueAtTime(0, ctx.currentTime + 0.05);
                 isPlaying[i] = false;
             }
         })
@@ -80,3 +80,15 @@ function initSoundSource(i){
     // start audio (with no gain)
     buffers[i].start();
 }
+
+// pan control
+const panValueInputs = document.getElementsByClassName('pan');
+let panValues = [0, 0, 0, 0];
+
+Array.from(panValueInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        panValues[i] = parseFloat(e.target.value);
+        panValue = Math.min(1, Math.max(-1, panValues[i]));
+        stereoPanners[i].pan.linearRampToValueAtTime(panValue, ctx.currentTime + 0.05);
+    })
+})
