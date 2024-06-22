@@ -7,6 +7,7 @@ let gainNodesRight = [];
 let stereoPanners = [];
 let mergers = [];
 let filterNodes = [];
+let qValues = [0, 10, 30, 60];
 let isPlaying = [false, false, false, false];
 
 // open the void
@@ -73,6 +74,9 @@ function initSoundSource(i){
     filterNodes[i] = ctx.createBiquadFilter();
     filterNodes[i].type = 'lowpass';
 
+    // Q factor
+    filterNodes[i].Q.value = qValues[i];
+
     // Connect everything together
     buffers[i].connect(splitters[i]);
     splitters[i].connect(gainNodesLeft[i], 0);
@@ -109,3 +113,14 @@ Array.from(freqValueInputs).forEach((input, i) => {
         filterNodes[i].frequency.linearRampToValueAtTime(freqValues[i], ctx.currentTime + 0.05);
     })
 })
+
+// Q factor control
+const qValueInputs = document.getElementsByClassName('q-factor');
+
+Array.from(qValueInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        qValues[i] = e.target.value;
+        filterNodes[i].Q.value = qValues[i];
+    })
+})
+
