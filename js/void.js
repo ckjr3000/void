@@ -8,7 +8,8 @@ let bitDepth = 16;
 let stereoPanner;
 let compressor;
 let bitcrusherGainNode;
-let pitchValue = 1000;
+let startingPitches = [1000, 5000, 10000, 15000];
+let pitchValue;
 
 function initialiseSoundSource() {
     const numChannels = 2;
@@ -36,23 +37,38 @@ function initialiseSoundSource() {
     const merger = ctx.createChannelMerger(2);
 
     filterNode = ctx.createBiquadFilter();
-    filterNode.type = 'bandpass';
+    filterNode.type = 'lowpass';
 
     bitcrusherNode = createBitcrusherNode();
+
+    // Gain node to compensate bitcrusher volume increase
+    bitcrusherGainNode = ctx.createGain();
+    bitcrusherGainNode.gain.setValueAtTime(1, ctx.currentTime);
+
+    // Initialize the compressor node
+    compressor = ctx.createDynamicsCompressor();
+    compressor.threshold.setValueAtTime(-40, ctx.currentTime);
+    compressor.knee.setValueAtTime(30, ctx.currentTime);
+    compressor.ratio.setValueAtTime(12, ctx.currentTime);
+    compressor.attack.setValueAtTime(0.003, ctx.currentTime);
+    compressor.release.setValueAtTime(0.25, ctx.currentTime);
+
+    gainNodeLeft.gain.setValueAtTime(gainVal, ctx.currentTime);
+    gainNodeRight.gain.setValueAtTime(gainVal, ctx.currentTime);
+    stereoPanner.pan.setValueAtTime(0, ctx.currentTime);
+    filterNode.frequency.setValueAtTime(20000, ctx.currentTime);
 
     source.connect(splitter);
     splitter.connect(gainNodeLeft, 0);
     splitter.connect(gainNodeRight, 1);
     gainNodeLeft.connect(merger, 0, 0);
     gainNodeRight.connect(merger, 0, 1);
-
     merger.connect(stereoPanner);
-
     stereoPanner.connect(filterNode);
-
     filterNode.connect(bitcrusherNode);
-
-    bitcrusherNode.connect(ctx.destination);
+    bitcrusherNode.connect(bitcrusherGainNode); 
+    bitcrusherGainNode.connect(compressor); 
+    compressor.connect(ctx.destination);
 
     source.start();
 }
@@ -68,33 +84,16 @@ openBtn.addEventListener('click', () => {
 })
 
 // play
-const playButton = document.getElementById('play-btn');
-console.log(playButton)
-playButton.addEventListener('click', () => {
-    console.log('click')
-    ctx = new AudioContext();
-    initialiseSoundSource();
-    gainNodeLeft.gain.setValueAtTime(gainVal, ctx.currentTime);
-    gainNodeRight.gain.setValueAtTime(gainVal, ctx.currentTime);
-    filterNode.frequency.linearRampToValueAtTime(pitchValue, ctx.currentTime + 0.05);
+let playBtns = document.getElementsByClassName('play-btn');
+Array.from(playBtns).forEach((btn, index)=> {
+    btn.addEventListener('click', () => {
+        ctx = new AudioContext();
+        initialiseSoundSource();
+        gainNodeLeft.gain.setValueAtTime(gainVal, ctx.currentTime);
+        gainNodeRight.gain.setValueAtTime(gainVal, ctx.currentTime);
+        filterNode.frequency.linearRampToValueAtTime(startingPitches[index], ctx.currentTime + 0.05);
+    })
 })
-
-// // stop
-// const stopButton = document.getElementById('stop-btn');
-// stopButton.addEventListener('click', () => {
-//     if (source) {
-//         source.stop();
-//     }
-// });
-
-// // master volume
-// const volCtrl = document.getElementById('vol-ctrl');
-// volCtrl.addEventListener('change', (e) => {
-//     let newGain = e.target.value;
-//     gainVal = newGain;
-//     gainNodeLeft.gain.linearRampToValueAtTime(gainVal, ctx.currentTime + 0.05);
-//     gainNodeRight.gain.linearRampToValueAtTime(gainVal, ctx.currentTime + 0.05);
-// });
 
 // pan
 const panValueInput = document.getElementById('pan-val');
