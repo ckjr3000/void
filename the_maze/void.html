@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/void.js" defer></script>
+    <link rel="stylesheet" href="../css/global.css">
+    <title>Document</title>
+</head>
+<body>
+    <a href="3.html">BACK</a>
+    <h1>OPEN THE VOID?</h1>
+    <button id="play-btn">yes</button>
+    <button>no</button>
+    <div id="main-controls" class="controls">
+        <div class="row">
+            <div class="post">
+                <input id="pan-val" name="int-sz" type="range" min="-1" max="1" step="0.01" default="0">
+                <button id="rand-pan">????</button>
+            </div>
+            <div class="post">
+                <input id="stretch-val" name="int-sz" type="range" min="0.5" max="2" step="0.01" default="0.01">
+                <button id="rand-stretch">????</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="post">
+                <input id="pitch-val" name="int-sz" type="range" min="0" max="24000" step="100" default="0">
+                <button id="rand-pitch">????</button>
+            </div>
+            <div class="post">
+                <input id="crush-val" name="int-sz" type="range" min="12" max="16" step="0.5" default="16">
+                <button id="rand-crush">????</button>
+            </div>
+        </div>
+    </div>
+    <!-- <script>
+        setInterval(function () {console.log('STOP')}, 1000);
+        setInterval(function () {console.log('DANGER')}, 3000);
+    </script> -->
+</body>
+</html>
