@@ -6,6 +6,7 @@ let gainNodesLeft = [];
 let gainNodesRight = [];
 let stereoPanners = [];
 let mergers = [];
+let filterNodes = [];
 let isPlaying = [false, false, false, false];
 
 // open the void
@@ -68,6 +69,10 @@ function initSoundSource(i){
     stereoPanners[i] = ctx.createStereoPanner();
     mergers[i] = ctx.createChannelMerger(2);
 
+    // Bandpass filter
+    filterNodes[i] = ctx.createBiquadFilter();
+    filterNodes[i].type = 'lowpass';
+
     // Connect everything together
     buffers[i].connect(splitters[i]);
     splitters[i].connect(gainNodesLeft[i], 0);
@@ -75,7 +80,8 @@ function initSoundSource(i){
     gainNodesLeft[i].connect(mergers[i], 0, 0);
     gainNodesRight[i].connect(mergers[i], 0, 1);
     mergers[i].connect(stereoPanners[i]);
-    stereoPanners[i].connect(ctx.destination);
+    stereoPanners[i].connect(filterNodes[i]);
+    filterNodes[i].connect(ctx.destination);
 
     // start audio (with no gain)
     buffers[i].start();
@@ -90,5 +96,16 @@ Array.from(panValueInputs).forEach((input, i) => {
         panValues[i] = parseFloat(e.target.value);
         panValue = Math.min(1, Math.max(-1, panValues[i]));
         stereoPanners[i].pan.linearRampToValueAtTime(panValue, ctx.currentTime + 0.05);
+    })
+})
+
+// Frequency control
+const freqValueInputs = document.getElementsByClassName('pitch');
+let freqValues = [500, 1000, 10000, 20000];
+
+Array.from(freqValueInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        freqValues[i] = e.target.value;
+        filterNodes[i].frequency.linearRampToValueAtTime(freqValues[i], ctx.currentTime + 0.05);
     })
 })
