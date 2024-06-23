@@ -1,15 +1,13 @@
-let ctx;
-let source;
-let gainNodeLeft, gainNodeRight;
-let gainVal = 0.5;
-let filterNode;
-let bitcrusherNode;
-let bitDepth = 16;
-let stereoPanner;
-let compressor;
-let bitcrusherGainNode;
-let startingPitches = [1000, 5000, 10000, 15000];
-let pitchValue;
+let ctx, gainNodeLeft, gainNodeRight;
+let playBtns = document.getElementsByClassName('play-btn');
+let buffers = [];
+let splitters = [];
+let gainNodesLeft = [];
+let gainNodesRight = [];
+let stereoPanners = [];
+let mergers = [];
+let filterNodes = [];
+let qValues = [0, 10, 30, 60];
 let isPlaying = [false, false, false, false];
 
 // open the void
@@ -21,220 +19,300 @@ openBtn.addEventListener('click', () => {
     startSection.classList.add('hidden');
     voidSection.classList.remove('hidden');
     ctx = new AudioContext();
-    initialiseSoundSource();
+    Array.from(playBtns).forEach((btn, i) => {
+        initSoundSource(i);
+        btn.addEventListener('click', () => {
+            if(!isPlaying[i]){
+                gainNodesLeft[i].gain.linearRampToValueAtTime(1, ctx.currentTime + 0.05);
+                gainNodesRight[i].gain.linearRampToValueAtTime(1, ctx.currentTime + 0.05);
+                isPlaying[i] = true;
+            } else {
+                gainNodesLeft[i].gain.linearRampToValueAtTime(0, ctx.currentTime + 0.05);
+                gainNodesRight[i].gain.linearRampToValueAtTime(0, ctx.currentTime + 0.05);
+                isPlaying[i] = false;
+            }
+        })
+    })
 })
 
-// play
-let playBtns = document.getElementsByClassName('play-btn');
-Array.from(playBtns).forEach((btn, index)=> {
+function initSoundSource(i){
+    // Creates a buffer source for every play btn on the page
+    buffers[i] = ctx.createBufferSource();
+    buffers[i].loop = true;
+
+    // Creates left and right data channel on the buffer
+    const bufferSize = 2 * ctx.sampleRate; 
+    const bufferLeft = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const dataLeft = bufferLeft.getChannelData(0);
+    const bufferRight = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const dataRight = bufferRight.getChannelData(0);
+
+    // Puts white noise in each channel
+    for (let i = 0; i < bufferSize; i++) {
+        dataLeft[i] = Math.random() * 2 - 1;
+        dataRight[i] = Math.random() * 2 - 1;
+    }
+
+    // Merges left and right into one stereo buffer
+    const stereoBuffer = ctx.createBuffer(2, bufferSize, ctx.sampleRate);
+    stereoBuffer.copyToChannel(dataLeft, 0);
+    stereoBuffer.copyToChannel(dataRight, 1);
+
+    // Sets that as the content of each plat btn's buffer
+    buffers[i].buffer = stereoBuffer;
+
+    // Uses channel splitter to handle panning
+    splitters[i] = ctx.createChannelSplitter(2);
+    gainNodesLeft[i] = ctx.createGain();
+    gainNodesLeft[i].gain.setValueAtTime(0, ctx.currentTime);
+    gainNodesRight[i] = ctx.createGain();
+    gainNodesRight[i].gain.setValueAtTime(0, ctx.currentTime);
+    stereoPanners[i] = ctx.createStereoPanner();
+    mergers[i] = ctx.createChannelMerger(2);
+
+    // Bandpass filter
+    filterNodes[i] = ctx.createBiquadFilter();
+    filterNodes[i].type = 'lowpass';
+
+    // Q factor
+    filterNodes[i].Q.value = qValues[i];
+
+    // Connect everything together
+    buffers[i].connect(splitters[i]);
+    splitters[i].connect(gainNodesLeft[i], 0);
+    splitters[i].connect(gainNodesRight[i], 1);
+    gainNodesLeft[i].connect(mergers[i], 0, 0);
+    gainNodesRight[i].connect(mergers[i], 0, 1);
+    mergers[i].connect(stereoPanners[i]);
+    stereoPanners[i].connect(filterNodes[i]);
+    filterNodes[i].connect(ctx.destination);
+
+    // start audio (with no gain)
+    buffers[i].start();
+}
+
+// pan control
+const panValueInputs = document.getElementsByClassName('pan-val');
+let panValues = [0, 0, 0, 0];
+
+Array.from(panValueInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        panValues[i] = parseFloat(e.target.value);
+        panValue = Math.min(1, Math.max(-1, panValues[i]));
+        stereoPanners[i].pan.linearRampToValueAtTime(panValue, ctx.currentTime + 0.05);
+    })
+})
+
+// Timestretch control
+const stretchValueInputs = document.getElementsByClassName('stretch-val');
+let stretchValues = [0, 0, 0, 0];
+
+Array.from(stretchValueInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        stretchValues[i] = e.target.value;
+        buffers[i].playbackRate.linearRampToValueAtTime(stretchValues[i], ctx.currentTime + 0.05);
+    })
+})
+
+// Frequency control
+const freqValueInputs = document.getElementsByClassName('pitch-val');
+let freqValues = [500, 1000, 10000, 20000];
+
+Array.from(freqValueInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        freqValues[i] = e.target.value;
+        filterNodes[i].frequency.linearRampToValueAtTime(freqValues[i], ctx.currentTime + 0.05);
+    })
+})
+
+// Q factor control
+const qValueInputs = document.getElementsByClassName('q-val');
+
+Array.from(qValueInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        qValues[i] = e.target.value;
+        filterNodes[i].Q.value = qValues[i];
+    })
+})
+
+// Volume control
+const volValueInputs = document.getElementsByClassName('vol-val');
+let volValues = [1, 1, 1, 1];
+
+Array.from(volValueInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        volValues[i] = e.target.value;
+        gainNodesLeft[i].gain.linearRampToValueAtTime(volValues[i], ctx.currentTime + 0.05);
+        gainNodesRight[i].gain.linearRampToValueAtTime(volValues[i], ctx.currentTime + 0.05);
+    })
+})
+
+// Randomiser buttons
+
+// Pan
+const randPans = document.getElementsByClassName('rand-pan');
+let randPansActive = [false, false, false, false];
+let panIntervalSizes = [1000, 1000, 1000, 1000];
+let panIntervals = [null, null, null, null];
+
+Array.from(randPans).forEach((btn, i) => {
     btn.addEventListener('click', () => {
-        if (isPlaying[index] === false) {
-            gainNodeLeft.gain.setValueAtTime(gainVal, ctx.currentTime);
-            gainNodeRight.gain.setValueAtTime(gainVal, ctx.currentTime);
-            filterNode.frequency.linearRampToValueAtTime(startingPitches[index], ctx.currentTime + 0.05);
+        if (!randPansActive[i]){
+            randPansActive[i] = true;
+            randomisePan(i);
+        } else {
+            randPansActive[i] = false;
+            clearInterval(panIntervals[i]);
+            panIntervals[i] = null;
         }
     })
 })
 
-function initialiseSoundSource() {
-    const numChannels = 2;
-    const sampleRate = ctx.sampleRate;
-    const duration = 2;
-    const numFrames = sampleRate * duration;
+function randomisePan(i){
+    if (panIntervals[i]) {
+        clearInterval(panIntervals[i]);
+    }
+    panIntervals[i] = setInterval(() => {
+        panValues[i] = Math.random() * 2 - 1;
+        stereoPanners[i].pan.linearRampToValueAtTime(panValues[i], ctx.currentTime + 0.05);
+        panValueInputs[i].value = panValues[i];
+    }, panIntervalSizes[i]);
+}
 
-    const buffer = ctx.createBuffer(numChannels, numFrames, sampleRate);
+// Timestretch
+const randStretches = document.getElementsByClassName('rand-stretch');
+let randStretchesActive = [false, false, false, false];
+let stretchIntervalSizes = [1000, 1000, 1000, 1000];
+let stretchIntervals = [null, null, null, null];
 
-    for (let channel = 0; channel < numChannels; channel++) {
-        const nowBuffering = buffer.getChannelData(channel);
-        for (let i = 0; i < numFrames; i++) {
-            nowBuffering[i] = Math.random() * 2 - 1; 
+Array.from(randStretches).forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+        if (!randStretchesActive[i]){
+            randStretchesActive[i] = true;
+            randomiseStretch(i);
+        } else {
+            randStretchesActive[i] = false;
+            clearInterval(stretchIntervals[i]);
+            stretchIntervals[i] = null;
         }
+    })
+})
+
+function randomiseStretch(i){
+    if (stretchIntervals[i]){
+        clearInterval(stretchIntervals[i]);
     }
-
-    source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.loop = true;
-
-    const splitter = ctx.createChannelSplitter(2);
-    gainNodeLeft = ctx.createGain();
-    gainNodeRight = ctx.createGain();
-    stereoPanner = ctx.createStereoPanner();
-    const merger = ctx.createChannelMerger(2);
-
-    filterNode = ctx.createBiquadFilter();
-    filterNode.type = 'lowpass';
-
-    bitcrusherNode = createBitcrusherNode();
-
-    // Gain node to compensate bitcrusher volume increase
-    bitcrusherGainNode = ctx.createGain();
-    bitcrusherGainNode.gain.setValueAtTime(1, ctx.currentTime);
-
-    // Initialize the compressor node
-    compressor = ctx.createDynamicsCompressor();
-    compressor.threshold.setValueAtTime(-40, ctx.currentTime);
-    compressor.knee.setValueAtTime(30, ctx.currentTime);
-    compressor.ratio.setValueAtTime(12, ctx.currentTime);
-    compressor.attack.setValueAtTime(0.003, ctx.currentTime);
-    compressor.release.setValueAtTime(0.25, ctx.currentTime);
-
-    gainNodeLeft.gain.setValueAtTime(0, ctx.currentTime);
-    gainNodeRight.gain.setValueAtTime(0, ctx.currentTime);
-    stereoPanner.pan.setValueAtTime(0, ctx.currentTime);
-    filterNode.frequency.setValueAtTime(20000, ctx.currentTime);
-
-    source.connect(splitter);
-    splitter.connect(gainNodeLeft, 0);
-    splitter.connect(gainNodeRight, 1);
-    gainNodeLeft.connect(merger, 0, 0);
-    gainNodeRight.connect(merger, 0, 1);
-    merger.connect(stereoPanner);
-    stereoPanner.connect(filterNode);
-    filterNode.connect(bitcrusherNode);
-    bitcrusherNode.connect(bitcrusherGainNode); 
-    bitcrusherGainNode.connect(compressor); 
-    compressor.connect(ctx.destination);
-
-    source.start();
+    stretchIntervals[i] = setInterval(() => {
+        stretchValues[i] = Math.random() * (2 - 0.5) + 0.5;
+        buffers[i].playbackRate.linearRampToValueAtTime(stretchValues[i], ctx.currentTime + 0.05);
+        stretchValueInputs[i].value = stretchValues[i];
+    }, stretchIntervalSizes[i]);
 }
 
-// pan
-const panValueInput = document.getElementById('pan-val');
-let panValue = 0;
+// Frequency
+const randFreqs = document.getElementsByClassName('rand-pitch');
+let randFreqsActive = [false, false, false, false];
+let freqIntervalSizes = [1000, 1000, 1000, 1000];
+let freqIntervals = [null, null, null, null];
 
-panValueInput.addEventListener('change', (e) => {
-    panValue = parseFloat(e.target.value);
-    setPanning(panValue);
-});
-
-function setPanning(panValue) {
-    panValue = Math.min(1, Math.max(-1, panValue));
-    stereoPanner.pan.linearRampToValueAtTime(panValue, ctx.currentTime + 0.05);
-}
-
-// randomise pan
-const randPan = document.getElementById('rand-pan');
-let randPanActive = false;
-let panInterval;
-randPan.addEventListener('click', () => {
-    if (!randPanActive) {
-        randPanActive = true;
-        panInterval = setInterval(() => {
-            panValue = Math.random() * 2 - 1;
-            stereoPanner.pan.linearRampToValueAtTime(panValue, ctx.currentTime + 0.05);
-            panValueInput.value = panValue;
-        }, 500);
-    } else {
-        randPanActive = false;
-        clearInterval(panInterval);
-        stereoPanner.pan.linearRampToValueAtTime(0, ctx.currentTime + 0.05); 
-        panValueInput.value = 0; 
-    }
-});
-
-// time stretch
-const stretchValueInput = document.getElementById('stretch-val');
-let stretchValue = 1;
-
-stretchValueInput.addEventListener('change', (e) => {
-    stretchValue = e.target.value;
-    source.playbackRate.linearRampToValueAtTime(stretchValue, ctx.currentTime + 0.05);
-});
-
-// randomise stretch
-const randStretch = document.getElementById('rand-stretch');
-let randStretchActive = false;
-let stretchInterval;
-randStretch.addEventListener('click', () => {
-    if (!randStretchActive) {
-        randStretchActive = true;
-        stretchInterval = setInterval(() => {
-            stretchValue = Math.random() * (2 - 0.5) + 0.5;
-            source.playbackRate.linearRampToValueAtTime(stretchValue, ctx.currentTime + 0.05);
-            stretchValueInput.value = stretchValue;
-        }, 500);
-    } else {
-        randStretchActive = false;
-        clearInterval(stretchInterval);
-        source.playbackRate.linearRampToValueAtTime(stretchValue, ctx.currentTime + 0.05);
-        stretchValueInput.value = 1; 
-    }
-});
-
-// pitch
-const pitchValueInput = document.getElementById('pitch-val');
-
-pitchValueInput.addEventListener('change', (e) => {
-    pitchValue = e.target.value;
-    filterNode.frequency.linearRampToValueAtTime(pitchValue, ctx.currentTime + 0.05);
-});
-
-// randomise pitch
-const randPitch = document.getElementById('rand-pitch');
-let randPitchActive = false;
-let pitchInterval;
-randPitch.addEventListener('click', () => {
-    if (!randPitchActive) {
-        randPitchActive = true;
-        pitchInterval = setInterval(() => {
-            pitchValue = Math.random() * 24000;
-            filterNode.frequency.linearRampToValueAtTime(pitchValue, ctx.currentTime + 0.05);
-            pitchValueInput.value = pitchValue;
-        }, 500);
-    } else {
-        randPitchActive = false;
-        clearInterval(pitchInterval);
-        filterNode.frequency.linearRampToValueAtTime(pitchValue, ctx.currentTime + 0.05);
-        pitchValueInput.value = pitchValue; 
-    }
-});
-
-// bitcrush
-function createBitcrusherNode() {
-    const bufferSize = 4096;
-    const bitcrusherNode = ctx.createScriptProcessor(bufferSize, 2, 2);
-
-    bitcrusherNode.onaudioprocess = function(event) {
-        for (let channel = 0; channel < event.inputBuffer.numberOfChannels; channel++) {
-            const input = event.inputBuffer.getChannelData(channel);
-            const output = event.outputBuffer.getChannelData(channel);
-
-            for (let i = 0; i < input.length; i++) {
-                let reduction = Math.pow(2, 16 - bitDepth);
-                output[i] = Math.sign(input[i]) * (1 - Math.pow(1 - Math.abs(input[i]), reduction));
-            }
+Array.from(randFreqs).forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+        if (!randFreqsActive[i]){
+            console.log('click')
+            randFreqsActive[i] = true;
+            randomiseFreq(i);
+        } else {
+            randFreqsActive[i] = false;
+            clearInterval(freqIntervals[i]);
+            freqIntervals[i] = null;
         }
-    };
+    })
+})
 
-    return bitcrusherNode;
+function randomiseFreq(i){
+    console.log('opopo')
+    if(freqIntervals[i]){
+        clearInterval(freqIntervals[i])
+    }
+    freqIntervals[i] = setInterval(() => {
+        freqValues[i] = Math.random() * 24000;
+        filterNodes[i].frequency.linearRampToValueAtTime(freqValues[i], ctx.currentTime + 0.05);
+        freqValueInputs[i].value = freqValues[i];
+    }, freqIntervalSizes[i]);
 }
 
-const bitcrushValueInput = document.getElementById('crush-val');
+// Q factor
+const randQs = document.getElementsByClassName('rand-q');
+let randQsActive = [false, false, false, false];
+let qIntervalSizes = [1000, 1000, 1000, 1000];
+let qIntervals = [null, null, null, null];
 
-bitcrushValueInput.addEventListener('change', (e) => {
-    bitDepth = e.target.value;
-    if (bitDepth < 16) {
-        bitcrusherGainNode.gain.setValueAtTime(0.5, ctx.currentTime); 
-    } else {
-        bitcrusherGainNode.gain.setValueAtTime(1, ctx.currentTime);
-    }
-});
+Array.from(randQs).forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+        if (!randQsActive[i]){
+            randQsActive[i] = true;
+            randomiseQ(i);
+        } else {
+            randQsActive[i] = false;
+            clearInterval(qIntervals[i]);
+            qIntervals[i] = null;
+        }
+    })
+})
 
-// randomise crush
-const randCrush = document.getElementById('rand-crush');
-let randCrushActive = false;
-let crushInterval;
-randCrush.addEventListener('click', () => {
-    if (!randCrushActive) {
-        randCrushActive = true;
-        crushInterval = setInterval(() => {
-            bitDepth = Math.random() * (16 - 12) + 12;
-            bitcrushValueInput.value = bitDepth;
-        }, 500);
-    } else {
-        randCrushActive = false;
-        clearInterval(crushInterval);
-        bitDepth = 16;
-        bitcrushValueInput.value = bitDepth; 
+function randomiseQ(i){
+    if (qIntervals[i]){
+        clearInterval(qIntervals[i]);
     }
-});
+    qIntervals[i] = setInterval(() => {
+        qValues[i] = Math.floor(Math.random() * 60);
+        filterNodes[i].Q.value = qValues[i];
+        qValueInputs[i].value = qValues[i];
+    }, qIntervalSizes[i]);
+}
+
+// Interval Size Selection
+
+// Pan
+const panIntInputs = document.getElementsByClassName('pan-interval');
+Array.from(panIntInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        panIntervalSizes[i] = e.target.value;
+        if (randPansActive[i]){
+            randomisePan(i);
+        }
+    })
+})
+
+// Timestretch
+const stretchIntInputs = document.getElementsByClassName('stretch-interval');
+Array.from(stretchIntInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        stretchIntervalSizes[i] = e.target.value;
+        if (randStretchesActive[i]){
+            randomiseStretch(i);
+        }
+    })
+})
+
+// Frequency
+const freqIntInputs = document.getElementsByClassName('pitch-interval');
+Array.from(freqIntInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        freqIntervalSizes[i] = e.target.value;
+        if (randFreqsActive[i]){
+            randomiseFreq(i);
+        }
+    })
+})
+
+// Q factor
+const qIntInputs = document.getElementsByClassName('q-interval');
+Array.from(qIntInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        qIntervalSizes[i] = e.target.value;
+        if (randQsActive[i]){
+            randomiseQ(i);
+        }
+    })
+})
