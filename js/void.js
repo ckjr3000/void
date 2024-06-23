@@ -10,6 +10,31 @@ let compressor;
 let bitcrusherGainNode;
 let startingPitches = [1000, 5000, 10000, 15000];
 let pitchValue;
+let isPlaying = [false, false, false, false];
+
+// open the void
+const openBtn = document.getElementById('open');
+const startSection = document.getElementById('start');
+const voidSection = document.getElementById('void');
+
+openBtn.addEventListener('click', () => {
+    startSection.classList.add('hidden');
+    voidSection.classList.remove('hidden');
+    ctx = new AudioContext();
+    initialiseSoundSource();
+})
+
+// play
+let playBtns = document.getElementsByClassName('play-btn');
+Array.from(playBtns).forEach((btn, index)=> {
+    btn.addEventListener('click', () => {
+        if (isPlaying[index] === false) {
+            gainNodeLeft.gain.setValueAtTime(gainVal, ctx.currentTime);
+            gainNodeRight.gain.setValueAtTime(gainVal, ctx.currentTime);
+            filterNode.frequency.linearRampToValueAtTime(startingPitches[index], ctx.currentTime + 0.05);
+        }
+    })
+})
 
 function initialiseSoundSource() {
     const numChannels = 2;
@@ -53,8 +78,8 @@ function initialiseSoundSource() {
     compressor.attack.setValueAtTime(0.003, ctx.currentTime);
     compressor.release.setValueAtTime(0.25, ctx.currentTime);
 
-    gainNodeLeft.gain.setValueAtTime(gainVal, ctx.currentTime);
-    gainNodeRight.gain.setValueAtTime(gainVal, ctx.currentTime);
+    gainNodeLeft.gain.setValueAtTime(0, ctx.currentTime);
+    gainNodeRight.gain.setValueAtTime(0, ctx.currentTime);
     stereoPanner.pan.setValueAtTime(0, ctx.currentTime);
     filterNode.frequency.setValueAtTime(20000, ctx.currentTime);
 
@@ -72,28 +97,6 @@ function initialiseSoundSource() {
 
     source.start();
 }
-
-// open the void
-const openBtn = document.getElementById('open');
-const startSection = document.getElementById('start');
-const voidSection = document.getElementById('void');
-
-openBtn.addEventListener('click', () => {
-    startSection.classList.add('hidden');
-    voidSection.classList.remove('hidden');
-})
-
-// play
-let playBtns = document.getElementsByClassName('play-btn');
-Array.from(playBtns).forEach((btn, index)=> {
-    btn.addEventListener('click', () => {
-        ctx = new AudioContext();
-        initialiseSoundSource();
-        gainNodeLeft.gain.setValueAtTime(gainVal, ctx.currentTime);
-        gainNodeRight.gain.setValueAtTime(gainVal, ctx.currentTime);
-        filterNode.frequency.linearRampToValueAtTime(startingPitches[index], ctx.currentTime + 0.05);
-    })
-})
 
 // pan
 const panValueInput = document.getElementById('pan-val');
@@ -233,32 +236,5 @@ randCrush.addEventListener('click', () => {
         clearInterval(crushInterval);
         bitDepth = 16;
         bitcrushValueInput.value = bitDepth; 
-    }
-});
-
-/// Add key press events
-document.addEventListener('keydown', (e) => {
-    let targetInput;
-    switch (e.key) {
-        case 'v':
-            targetInput = document.getElementById('vol-ctrl');
-            break;
-        case 'p':
-            targetInput = document.getElementById('pan-val');
-            break;
-        case 't':
-            targetInput = document.getElementById('stretch-val');
-            break;
-        case 'f':
-            targetInput = document.getElementById('pitch-val');
-            break;
-        case 'b':
-            targetInput = document.getElementById('crush-val');
-            break;
-        default:
-            return; 
-    }
-    if (targetInput) {
-        targetInput.focus();
     }
 });

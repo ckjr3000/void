@@ -15,11 +15,11 @@
 
     <div id="void" class="hidden">
         <!-- sound source 1 -->
-        <div class="controls" style="border: 1px solid white;">
+        <div class="controls">
             <button class="play-btn">⚫</button>
             <div class="effect pan">
-                <input id="pan-val" name="int-sz" type="range" min="-1" max="1" step="0.01" default="0">
-                <button id="rand-pan">????</button>
+                <input class="pan-val" name="int-sz" type="range" min="-1" max="1" step="0.01" default="0">
+                <button class="rand-pan">????</button>
                 <select id="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
@@ -30,7 +30,7 @@
                 </select>
             </div>
             <div class="effect timestretch">
-                <input id="stretch-val" name="int-sz" type="range" min="0.5" max="2" step="0.01" default="0.01">
+                <input class="stretch-val" name="int-sz" type="range" min="0.5" max="2" step="0.01" default="0.01">
                 <button id="rand-stretch">????</button>
                 <select id="interval" name="interval">
                     <option value="100">100</option>
@@ -42,9 +42,9 @@
                 </select>
             </div>
             <div class="effect pitch">
-                <input id="pitch-val" name="int-sz" type="range" min="0" max="24000" step="100" default="0">
-                <button id="rand-pitch">????</button>
-                <select id="interval" name="interval">
+                <input class="pitch-val" name="int-sz" type="range" min="0" max="24000" step="100" default="0">
+                <button class="rand-pitch">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -54,9 +54,9 @@
                 </select>
             </div>
             <div class="effect q-factor">
-                <input id="q-val" name="int-sz" type="range" min="0" max="60" step="1">
-                <button id="rand-q">????</button>
-                <select id="interval" name="interval">
+                <input class="q-val" name="int-sz" type="range" min="0" max="60" step="1">
+                <button class="rand-q">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -68,12 +68,12 @@
         </div>
 
         <!-- sound source 2 -->
-        <div class="controls" style="border: 1px solid white;">
+        <div class="controls" style="border: 1px solclass white;">
             <button class="play-btn">⚫</button>
             <div class="effect pan">
-                <input id="pan-val" name="int-sz" type="range" min="-1" max="1" step="0.01" default="0">
-                <button id="rand-pan">????</button>
-                <select id="interval" name="interval">
+                <input class="pan-val" name="int-sz" type="range" min="-1" max="1" step="0.01" default="0">
+                <button class="rand-pan">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -83,9 +83,9 @@
                 </select>
             </div>
             <div class="effect timestretch">
-                <input id="stretch-val" name="int-sz" type="range" min="0.5" max="2" step="0.01" default="0.01">
-                <button id="rand-stretch">????</button>
-                <select id="interval" name="interval">
+                <input class="stretch-val" name="int-sz" type="range" min="0.5" max="2" step="0.01" default="0.01">
+                <button class="rand-stretch">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -95,9 +95,9 @@
                 </select>
             </div>
             <div class="effect pitch">
-                <input id="pitch-val" name="int-sz" type="range" min="0" max="24000" step="100" default="0">
-                <button id="rand-pitch">????</button>
-                <select id="interval" name="interval">
+                <input class="pitch-val" name="int-sz" type="range" min="0" max="24000" step="100" default="0">
+                <button class="rand-pitch">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -107,9 +107,9 @@
                 </select>
             </div>
             <div class="effect q-factor">
-                <input id="q-val" name="int-sz" type="range" min="0" max="60" step="1">
-                <button id="rand-q">????</button>
-                <select id="interval" name="interval">
+                <input class="q-val" name="int-sz" type="range" min="0" max="60" step="1">
+                <button class="rand-q">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -121,12 +121,12 @@
         </div>
 
         <!-- sound source 3 -->
-        <div class="controls" style="border: 1px solid white;">
+        <div class="controls" style="border: 1px solclass white;">
             <button class="play-btn">⚫</button>
             <div class="effect pan">
-                <input id="pan-val" name="int-sz" type="range" min="-1" max="1" step="0.01" default="0">
-                <button id="rand-pan">????</button>
-                <select id="interval" name="interval">
+                <input class="pan-val" name="int-sz" type="range" min="-1" max="1" step="0.01" default="0">
+                <button class="rand-pan">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -136,9 +136,9 @@
                 </select>
             </div>
             <div class="effect timestretch">
-                <input id="stretch-val" name="int-sz" type="range" min="0.5" max="2" step="0.01" default="0.01">
-                <button id="rand-stretch">????</button>
-                <select id="interval" name="interval">
+                <input class="stretch-val" name="int-sz" type="range" min="0.5" max="2" step="0.01" default="0.01">
+                <button class="rand-stretch">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -148,9 +148,9 @@
                 </select>
             </div>
             <div class="effect pitch">
-                <input id="pitch-val" name="int-sz" type="range" min="0" max="24000" step="100" default="0">
-                <button id="rand-pitch">????</button>
-                <select id="interval" name="interval">
+                <input class="pitch-val" name="int-sz" type="range" min="0" max="24000" step="100" default="0">
+                <button class="rand-pitch">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -160,9 +160,9 @@
                 </select>
             </div>
             <div class="effect q-factor">
-                <input id="q-val" name="int-sz" type="range" min="0" max="60" step="1">
-                <button id="rand-q">????</button>
-                <select id="interval" name="interval">
+                <input class="q-val" name="int-sz" type="range" min="0" max="60" step="1">
+                <button class="rand-q">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -174,12 +174,12 @@
         </div>
 
         <!-- sound source 4 -->
-        <div class="controls" style="border: 1px solid white;">
+        <div class="controls" style="border: 1px solclass white;">
             <button class="play-btn">⚫</button>
             <div class="effect pan">
-                <input id="pan-val" name="int-sz" type="range" min="-1" max="1" step="0.01" default="0">
-                <button id="rand-pan">????</button>
-                <select id="interval" name="interval">
+                <input class="pan-val" name="int-sz" type="range" min="-1" max="1" step="0.01" default="0">
+                <button class="rand-pan">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -189,9 +189,9 @@
                 </select>
             </div>
             <div class="effect timestretch">
-                <input id="stretch-val" name="int-sz" type="range" min="0.5" max="2" step="0.01" default="0.01">
-                <button id="rand-stretch">????</button>
-                <select id="interval" name="interval">
+                <input class="stretch-val" name="int-sz" type="range" min="0.5" max="2" step="0.01" default="0.01">
+                <button class="rand-stretch">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -201,9 +201,9 @@
                 </select>
             </div>
             <div class="effect pitch">
-                <input id="pitch-val" name="int-sz" type="range" min="0" max="24000" step="100" default="0">
-                <button id="rand-pitch">????</button>
-                <select id="interval" name="interval">
+                <input class="pitch-val" name="int-sz" type="range" min="0" max="24000" step="100" default="0">
+                <button class="rand-pitch">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>
@@ -213,9 +213,9 @@
                 </select>
             </div>
             <div class="effect q-factor">
-                <input id="q-val" name="int-sz" type="range" min="0" max="60" step="1">
-                <button id="rand-q">????</button>
-                <select id="interval" name="interval">
+                <input class="q-val" name="int-sz" type="range" min="0" max="60" step="1">
+                <button class="rand-q">????</button>
+                <select class="interval" name="interval">
                     <option value="100">100</option>
                     <option value="250">250</option>
                     <option value="500">500</option>

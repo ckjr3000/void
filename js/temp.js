@@ -92,7 +92,7 @@ function initSoundSource(i){
 }
 
 // pan control
-const panValueInputs = document.getElementsByClassName('pan');
+const panValueInputs = document.getElementsByClassName('pan-val');
 let panValues = [0, 0, 0, 0];
 
 Array.from(panValueInputs).forEach((input, i) => {
@@ -124,3 +124,26 @@ Array.from(qValueInputs).forEach((input, i) => {
     })
 })
 
+// Randomiser buttons
+
+// Pan
+const randPans = document.getElementsByClassName('rand-pan');
+let randPansActive = [false, false, false, false];
+let panIntervalSizes = [1000, 1000, 1000, 1000];
+let panIntervals = [null, null, null, null];
+
+Array.from(randPans).forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+        if (!randPansActive[i]){
+            randPansActive[i] = true;
+            panIntervals[i] = setInterval(() => {
+                panValues[i] = Math.random() * 2 - 1;
+                stereoPanners[i].pan.linearRampToValueAtTime(panValues[i], ctx.currentTime + 0.05);
+                panValueInputs[i].value = panValues[i];
+            }, panIntervalSizes[i]);
+        } else {
+            randPansActive[i] = false;
+            clearInterval(panIntervals[i]);
+        }
+    })
+})
