@@ -115,7 +115,7 @@ Array.from(stretchValueInputs).forEach((input, i) => {
 })
 
 // Frequency control
-const freqValueInputs = document.getElementsByClassName('pitch');
+const freqValueInputs = document.getElementsByClassName('pitch-val');
 let freqValues = [500, 1000, 10000, 20000];
 
 Array.from(freqValueInputs).forEach((input, i) => {
@@ -172,11 +172,33 @@ Array.from(randStretches).forEach((btn, i) => {
             stretchIntervals[i] = setInterval(() => {
                 stretchValues[i] = Math.random() * (2 - 0.5) + 0.5;
                 buffers[i].playbackRate.linearRampToValueAtTime(stretchValues[i], ctx.currentTime + 0.05);
-                panValueInputs[i].value = panValues[i];
+                stretchValueInputs[i].value = stretchValues[i];
             }, stretchIntervalSizes[i]);
         } else {
             randStretchesActive[i] = false;
             clearInterval(stretchIntervals[i]);
+        }
+    })
+})
+
+// Frequency
+const randFreqs = document.getElementsByClassName('rand-pitch');
+let randFreqsActive = [false, false, false, false];
+let freqIntervalSizes = [1000, 1000, 1000, 1000];
+let freqIntervals = [null, null, null, null];
+
+Array.from(randFreqs).forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+        if (!randFreqsActive[i]){
+            randFreqsActive[i] = true;
+            freqIntervals[i] = setInterval(() => {
+                freqValues[i] = Math.random() * 24000;
+                filterNodes[i].frequency.linearRampToValueAtTime(freqValues[i], ctx.currentTime + 0.05);
+                freqValueInputs[i].value = freqValues[i];
+            }, freqIntervalSizes[i]);
+        } else {
+            randFreqsActive[i] = false;
+            clearInterval(freqIntervals[i]);
         }
     })
 })
