@@ -126,7 +126,7 @@ Array.from(freqValueInputs).forEach((input, i) => {
 })
 
 // Q factor control
-const qValueInputs = document.getElementsByClassName('q-factor');
+const qValueInputs = document.getElementsByClassName('q-val');
 
 Array.from(qValueInputs).forEach((input, i) => {
     input.addEventListener('change', (e) => {
@@ -199,6 +199,28 @@ Array.from(randFreqs).forEach((btn, i) => {
         } else {
             randFreqsActive[i] = false;
             clearInterval(freqIntervals[i]);
+        }
+    })
+})
+
+// Q factor
+const randQs = document.getElementsByClassName('rand-q');
+let randQsActive = [false, false, false, false];
+let qIntervalSizes = [1000, 1000, 1000, 1000];
+let qIntervals = [null, null, null, null];
+
+Array.from(randQs).forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+        if (!randQsActive[i]){
+            randQsActive[i] = true;
+            qIntervals[i] = setInterval(() => {
+                qValues[i] = Math.floor(Math.random() * 60);
+                filterNodes[i].Q.value = qValues[i];
+                qValueInputs[i].value = qValues[i];
+            }, qIntervalSizes[i]);
+        } else {
+            randQsActive[i] = false;
+            clearInterval(qIntervals[i]);
         }
     })
 })
