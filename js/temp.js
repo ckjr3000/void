@@ -103,6 +103,17 @@ Array.from(panValueInputs).forEach((input, i) => {
     })
 })
 
+// Timestretch control
+const stretchValueInputs = document.getElementsByClassName('stretch-val');
+let stretchValues = [0, 0, 0, 0];
+
+Array.from(stretchValueInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        stretchValues[i] = e.target.value;
+        buffers[i].playbackRate.linearRampToValueAtTime(stretchValues[i], ctx.currentTime + 0.05);
+    })
+})
+
 // Frequency control
 const freqValueInputs = document.getElementsByClassName('pitch');
 let freqValues = [500, 1000, 10000, 20000];
@@ -144,6 +155,28 @@ Array.from(randPans).forEach((btn, i) => {
         } else {
             randPansActive[i] = false;
             clearInterval(panIntervals[i]);
+        }
+    })
+})
+
+// Timestretch
+const randStretches = document.getElementsByClassName('rand-stretch');
+let randStretchesActive = [false, false, false, false];
+let stretchIntervalSizes = [1000, 1000, 1000, 1000];
+let stretchIntervals = [null, null, null, null];
+
+Array.from(randStretches).forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+        if (!randStretchesActive[i]){
+            randStretchesActive[i] = true;
+            stretchIntervals[i] = setInterval(() => {
+                stretchValues[i] = Math.random() * (2 - 0.5) + 0.5;
+                buffers[i].playbackRate.linearRampToValueAtTime(stretchValues[i], ctx.currentTime + 0.05);
+                panValueInputs[i].value = panValues[i];
+            }, stretchIntervalSizes[i]);
+        } else {
+            randStretchesActive[i] = false;
+            clearInterval(stretchIntervals[i]);
         }
     })
 })
