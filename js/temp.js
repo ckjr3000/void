@@ -177,17 +177,25 @@ Array.from(randStretches).forEach((btn, i) => {
     btn.addEventListener('click', () => {
         if (!randStretchesActive[i]){
             randStretchesActive[i] = true;
-            stretchIntervals[i] = setInterval(() => {
-                stretchValues[i] = Math.random() * (2 - 0.5) + 0.5;
-                buffers[i].playbackRate.linearRampToValueAtTime(stretchValues[i], ctx.currentTime + 0.05);
-                stretchValueInputs[i].value = stretchValues[i];
-            }, stretchIntervalSizes[i]);
+            randomiseStretch(i);
         } else {
             randStretchesActive[i] = false;
             clearInterval(stretchIntervals[i]);
+            stretchIntervals[i] = null;
         }
     })
 })
+
+function randomiseStretch(i){
+    if (stretchIntervals[i]){
+        clearInterval(stretchIntervals[i]);
+    }
+    stretchIntervals[i] = setInterval(() => {
+        stretchValues[i] = Math.random() * (2 - 0.5) + 0.5;
+        buffers[i].playbackRate.linearRampToValueAtTime(stretchValues[i], ctx.currentTime + 0.05);
+        stretchValueInputs[i].value = stretchValues[i];
+    }, stretchIntervalSizes[i]);
+}
 
 // Frequency
 const randFreqs = document.getElementsByClassName('rand-pitch');
@@ -198,18 +206,28 @@ let freqIntervals = [null, null, null, null];
 Array.from(randFreqs).forEach((btn, i) => {
     btn.addEventListener('click', () => {
         if (!randFreqsActive[i]){
+            console.log('click')
             randFreqsActive[i] = true;
-            freqIntervals[i] = setInterval(() => {
-                freqValues[i] = Math.random() * 24000;
-                filterNodes[i].frequency.linearRampToValueAtTime(freqValues[i], ctx.currentTime + 0.05);
-                freqValueInputs[i].value = freqValues[i];
-            }, freqIntervalSizes[i]);
+            randomiseFreq(i);
         } else {
             randFreqsActive[i] = false;
             clearInterval(freqIntervals[i]);
+            freqIntervals[i] = null;
         }
     })
 })
+
+function randomiseFreq(i){
+    console.log('opopo')
+    if(freqIntervals[i]){
+        clearInterval(freqIntervals[i])
+    }
+    freqIntervals[i] = setInterval(() => {
+        freqValues[i] = Math.random() * 24000;
+        filterNodes[i].frequency.linearRampToValueAtTime(freqValues[i], ctx.currentTime + 0.05);
+        freqValueInputs[i].value = freqValues[i];
+    }, freqIntervalSizes[i]);
+}
 
 // Q factor
 const randQs = document.getElementsByClassName('rand-q');
@@ -221,17 +239,25 @@ Array.from(randQs).forEach((btn, i) => {
     btn.addEventListener('click', () => {
         if (!randQsActive[i]){
             randQsActive[i] = true;
-            qIntervals[i] = setInterval(() => {
-                qValues[i] = Math.floor(Math.random() * 60);
-                filterNodes[i].Q.value = qValues[i];
-                qValueInputs[i].value = qValues[i];
-            }, qIntervalSizes[i]);
+            randomiseQ(i);
         } else {
             randQsActive[i] = false;
             clearInterval(qIntervals[i]);
+            qIntervals[i] = null;
         }
     })
 })
+
+function randomiseQ(i){
+    if (qIntervals[i]){
+        clearInterval(qIntervals[i]);
+    }
+    qIntervals[i] = setInterval(() => {
+        qValues[i] = Math.floor(Math.random() * 60);
+        filterNodes[i].Q.value = qValues[i];
+        qValueInputs[i].value = qValues[i];
+    }, qIntervalSizes[i]);
+}
 
 // Interval Size Selection
 
@@ -247,7 +273,34 @@ Array.from(panIntInputs).forEach((input, i) => {
 })
 
 // Timestretch
+const stretchIntInputs = document.getElementsByClassName('stretch-interval');
+Array.from(stretchIntInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        stretchIntervalSizes[i] = e.target.value;
+        if (randStretchesActive[i]){
+            randomiseStretch(i);
+        }
+    })
+})
 
 // Frequency
+const freqIntInputs = document.getElementsByClassName('pitch-interval');
+Array.from(freqIntInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        freqIntervalSizes[i] = e.target.value;
+        if (randFreqsActive[i]){
+            randomiseFreq(i);
+        }
+    })
+})
 
 // Q factor
+const qIntInputs = document.getElementsByClassName('q-interval');
+Array.from(qIntInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        qIntervalSizes[i] = e.target.value;
+        if (randQsActive[i]){
+            randomiseQ(i);
+        }
+    })
+})
