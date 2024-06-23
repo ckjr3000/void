@@ -147,17 +147,25 @@ Array.from(randPans).forEach((btn, i) => {
     btn.addEventListener('click', () => {
         if (!randPansActive[i]){
             randPansActive[i] = true;
-            panIntervals[i] = setInterval(() => {
-                panValues[i] = Math.random() * 2 - 1;
-                stereoPanners[i].pan.linearRampToValueAtTime(panValues[i], ctx.currentTime + 0.05);
-                panValueInputs[i].value = panValues[i];
-            }, panIntervalSizes[i]);
+            randomisePan(i);
         } else {
             randPansActive[i] = false;
             clearInterval(panIntervals[i]);
+            panIntervals[i] = null;
         }
     })
 })
+
+function randomisePan(i){
+    if (panIntervals[i]) {
+        clearInterval(panIntervals[i]);
+    }
+    panIntervals[i] = setInterval(() => {
+        panValues[i] = Math.random() * 2 - 1;
+        stereoPanners[i].pan.linearRampToValueAtTime(panValues[i], ctx.currentTime + 0.05);
+        panValueInputs[i].value = panValues[i];
+    }, panIntervalSizes[i]);
+}
 
 // Timestretch
 const randStretches = document.getElementsByClassName('rand-stretch');
@@ -224,3 +232,22 @@ Array.from(randQs).forEach((btn, i) => {
         }
     })
 })
+
+// Interval Size Selection
+
+// Pan
+const panIntInputs = document.getElementsByClassName('pan-interval');
+Array.from(panIntInputs).forEach((input, i) => {
+    input.addEventListener('change', (e) => {
+        panIntervalSizes[i] = e.target.value;
+        if (randPansActive[i]){
+            randomisePan(i);
+        }
+    })
+})
+
+// Timestretch
+
+// Frequency
+
+// Q factor
