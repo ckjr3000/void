@@ -31,3 +31,12 @@ body {
 .hidden {
   display: none !important;
 }
+
+.big-btn {
+  color: rgb(36, 36, 49);
+  text-decoration: none;
+  background-color: white;
+  font-size: 25px;
+  padding: 15px;
+  border-radius: 50px;
+}
