@@ -69,3 +69,18 @@
   cursor: pointer;
   background-color: white;
 }
+
+.heart:hover {
+  cursor: pointer;
+}
+
+#notif-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  padding: 15px;
+}
+
+#notif-section p {
+  font-size: 15px;
+}
