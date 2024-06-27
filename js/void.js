@@ -7,6 +7,7 @@ let gainNodesRight = [];
 let stereoPanners = [];
 let mergers = [];
 let filterNodes = [];
+let lpNodes = [];
 let qValues = [0, 10, 30, 60];
 let isPlaying = [false, false, false, false];
 
@@ -47,11 +48,28 @@ function initSoundSource(i){
     const bufferRight = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const dataRight = bufferRight.getChannelData(0);
 
-    // Puts white noise in each channel
-    for (let i = 0; i < bufferSize; i++) {
-        dataLeft[i] = Math.random() * 2 - 1;
-        dataRight[i] = Math.random() * 2 - 1;
-    }
+        // Variables for Voss-McCartney pink noise algorithm
+        const b0 = new Float32Array(bufferSize);
+        const b1 = new Float32Array(bufferSize);
+        const b2 = new Float32Array(bufferSize);
+        const b3 = new Float32Array(bufferSize);
+        const b4 = new Float32Array(bufferSize);
+        const b5 = new Float32Array(bufferSize);
+        const b6 = new Float32Array(bufferSize);
+    
+        // Fill the buffer with pink noise
+        for (let i = 0; i < bufferSize; i++) {
+            b0[i] = Math.random() * 2 - 1;
+            if (i % 2 === 0) b1[i] = Math.random() * 2 - 1;
+            if (i % 4 === 0) b2[i] = Math.random() * 2 - 1;
+            if (i % 8 === 0) b3[i] = Math.random() * 2 - 1;
+            if (i % 16 === 0) b4[i] = Math.random() * 2 - 1;
+            if (i % 32 === 0) b5[i] = Math.random() * 2 - 1;
+            if (i % 64 === 0) b6[i] = Math.random() * 2 - 1;
+    
+            dataLeft[i] = (b0[i] + b1[i] + b2[i] + b3[i] + b4[i] + b5[i] + b6[i]) / 7;
+            dataRight[i] = (b0[i] + b1[i] + b2[i] + b3[i] + b4[i] + b5[i] + b6[i]) / 7;
+        }
 
     // Merges left and right into one stereo buffer
     const stereoBuffer = ctx.createBuffer(2, bufferSize, ctx.sampleRate);
@@ -77,6 +95,12 @@ function initSoundSource(i){
     // Q factor
     filterNodes[i].Q.value = qValues[i];
 
+    // Global lowpass filter
+    lpNodes[i] = ctx.createBiquadFilter();
+    lpNodes[i].type = 'lowpass';
+    lpNodes[i].frequency.setValueAtTime(18000, ctx.currentTime);
+
+
     // Connect everything together
     buffers[i].connect(splitters[i]);
     splitters[i].connect(gainNodesLeft[i], 0);
@@ -85,7 +109,8 @@ function initSoundSource(i){
     gainNodesRight[i].connect(mergers[i], 0, 1);
     mergers[i].connect(stereoPanners[i]);
     stereoPanners[i].connect(filterNodes[i]);
-    filterNodes[i].connect(ctx.destination);
+    filterNodes[i].connect(lpNodes[i]);
+    lpNodes[i].connect(ctx.destination);
 
     // start audio (with no gain)
     buffers[i].start();
