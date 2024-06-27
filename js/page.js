@@ -3,6 +3,7 @@ const likeAudio = new Audio("../assets/audio/like_sound.wav");
 
 Array.from(likeBtns).forEach((btn) => {
     btn.addEventListener('click', () => {
+        btn.innerHTML = "<p>💜</p>"
         likeAudio.play();
     })
 })
