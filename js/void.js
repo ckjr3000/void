@@ -121,7 +121,7 @@ const panValueInputs = document.getElementsByClassName('pan-val');
 let panValues = [0, 0, 0, 0];
 
 Array.from(panValueInputs).forEach((input, i) => {
-    input.addEventListener('change', (e) => {
+    input.addEventListener('input', (e) => {
         panValues[i] = parseFloat(e.target.value);
         panValue = Math.min(1, Math.max(-1, panValues[i]));
         stereoPanners[i].pan.linearRampToValueAtTime(panValue, ctx.currentTime + 0.05);
@@ -133,7 +133,7 @@ const stretchValueInputs = document.getElementsByClassName('stretch-val');
 let stretchValues = [0, 0, 0, 0];
 
 Array.from(stretchValueInputs).forEach((input, i) => {
-    input.addEventListener('change', (e) => {
+    input.addEventListener('input', (e) => {
         stretchValues[i] = e.target.value;
         buffers[i].playbackRate.linearRampToValueAtTime(stretchValues[i], ctx.currentTime + 0.05);
     })
@@ -144,7 +144,7 @@ const freqValueInputs = document.getElementsByClassName('pitch-val');
 let freqValues = [500, 1000, 10000, 20000];
 
 Array.from(freqValueInputs).forEach((input, i) => {
-    input.addEventListener('change', (e) => {
+    input.addEventListener('input', (e) => {
         freqValues[i] = e.target.value;
         filterNodes[i].frequency.linearRampToValueAtTime(freqValues[i], ctx.currentTime + 0.05);
     })
@@ -154,7 +154,7 @@ Array.from(freqValueInputs).forEach((input, i) => {
 const qValueInputs = document.getElementsByClassName('q-val');
 
 Array.from(qValueInputs).forEach((input, i) => {
-    input.addEventListener('change', (e) => {
+    input.addEventListener('input', (e) => {
         qValues[i] = e.target.value;
         filterNodes[i].Q.value = qValues[i];
     })
@@ -165,7 +165,7 @@ const volValueInputs = document.getElementsByClassName('vol-val');
 let volValues = [1, 1, 1, 1];
 
 Array.from(volValueInputs).forEach((input, i) => {
-    input.addEventListener('change', (e) => {
+    input.addEventListener('input', (e) => {
         volValues[i] = e.target.value;
         gainNodesLeft[i].gain.linearRampToValueAtTime(volValues[i], ctx.currentTime + 0.05);
         gainNodesRight[i].gain.linearRampToValueAtTime(volValues[i], ctx.currentTime + 0.05);
@@ -301,7 +301,7 @@ function randomiseQ(i){
 // Pan
 const panIntInputs = document.getElementsByClassName('pan-interval');
 Array.from(panIntInputs).forEach((input, i) => {
-    input.addEventListener('change', (e) => {
+    input.addEventListener('input', (e) => {
         panIntervalSizes[i] = e.target.value;
         if (randPansActive[i]){
             randomisePan(i);
@@ -312,7 +312,7 @@ Array.from(panIntInputs).forEach((input, i) => {
 // Timestretch
 const stretchIntInputs = document.getElementsByClassName('stretch-interval');
 Array.from(stretchIntInputs).forEach((input, i) => {
-    input.addEventListener('change', (e) => {
+    input.addEventListener('input', (e) => {
         stretchIntervalSizes[i] = e.target.value;
         if (randStretchesActive[i]){
             randomiseStretch(i);
@@ -323,7 +323,7 @@ Array.from(stretchIntInputs).forEach((input, i) => {
 // Frequency
 const freqIntInputs = document.getElementsByClassName('pitch-interval');
 Array.from(freqIntInputs).forEach((input, i) => {
-    input.addEventListener('change', (e) => {
+    input.addEventListener('input', (e) => {
         freqIntervalSizes[i] = e.target.value;
         if (randFreqsActive[i]){
             randomiseFreq(i);
@@ -334,10 +334,33 @@ Array.from(freqIntInputs).forEach((input, i) => {
 // Q factor
 const qIntInputs = document.getElementsByClassName('q-interval');
 Array.from(qIntInputs).forEach((input, i) => {
-    input.addEventListener('change', (e) => {
+    input.addEventListener('input', (e) => {
         qIntervalSizes[i] = e.target.value;
         if (randQsActive[i]){
             randomiseQ(i);
         }
     })
 })
+
+// Incrementally revealing controls
+
+const stretchSections = document.getElementsByClassName('timestretch');
+setTimeout(() => {
+    Array.from(stretchSections).forEach(input => {
+        input.classList.remove('hidden');
+    })
+}, 5000);
+
+const freqSections = document.getElementsByClassName('pitch');
+setTimeout(() => {
+    Array.from(freqSections).forEach(input => {
+        input.classList.remove('hidden');
+    })
+}, 10000);
+
+const qSections = document.getElementsByClassName('q-factor');
+setTimeout(() => {
+    Array.from(qSections).forEach(input => {
+        input.classList.remove('hidden');
+    })
+}, 15000);
