@@ -349,18 +349,18 @@ setTimeout(() => {
     Array.from(stretchSections).forEach(input => {
         input.classList.remove('hidden');
     })
-}, 5000);
+}, 180000);
 
 const freqSections = document.getElementsByClassName('pitch');
 setTimeout(() => {
     Array.from(freqSections).forEach(input => {
         input.classList.remove('hidden');
     })
-}, 10000);
+}, 360000);
 
 const qSections = document.getElementsByClassName('q-factor');
 setTimeout(() => {
     Array.from(qSections).forEach(input => {
         input.classList.remove('hidden');
     })
-}, 15000);
+}, 540000);

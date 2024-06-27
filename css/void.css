@@ -2,31 +2,116 @@
   0% {
     background-image: url("../assets/gifs/compressed/wind_1-export-export.gif");
   }
-  10% {
+  2.78% {
     background-image: url("../assets/gifs/compressed/wind_2-export-export.gif");
   }
-  20% {
+  5.56% {
     background-image: url("../assets/gifs/compressed/wind_4-export-export.gif");
   }
-  30% {
+  8.34% {
     background-image: url("../assets/gifs/compressed/wind_5-export-export.gif");
   }
-  40% {
+  11.12% {
     background-image: url("../assets/gifs/compressed/wind_6-export-export.gif");
   }
-  50% {
+  13.90% {
     background-image: url("../assets/gifs/compressed/wind_7-export-export.gif");
   }
-  60% {
+  16.68% {
     background-image: url("../assets/gifs/compressed/wind_8-export-export.gif");
   }
-  75% {
+  19.46% {
     background-image: url("../assets/gifs/compressed/wind_9-export-export.gif");
   }
-  100% {
+  22.24% {
     background-image: url("../assets/gifs/compressed/wind_10-export-export.gif");
   }
+  25.02% {
+    background-image: url("../assets/gifs/compressed/wind_1-export-export.gif");
+  }
+  27.80% {
+    background-image: url("../assets/gifs/compressed/wind_2-export-export.gif");
+  }
+  30.58% {
+    background-image: url("../assets/gifs/compressed/wind_4-export-export.gif");
+  }
+  33.36% {
+    background-image: url("../assets/gifs/compressed/wind_5-export-export.gif");
+  }
+  36.14% {
+    background-image: url("../assets/gifs/compressed/wind_6-export-export.gif");
+  }
+  38.92% {
+    background-image: url("../assets/gifs/compressed/wind_7-export-export.gif");
+  }
+  41.70% {
+    background-image: url("../assets/gifs/compressed/wind_8-export-export.gif");
+  }
+  44.48% {
+    background-image: url("../assets/gifs/compressed/wind_9-export-export.gif");
+  }
+  47.26% {
+    background-image: url("../assets/gifs/compressed/wind_10-export-export.gif");
+  }
+  50.04% {
+    background-image: url("../assets/gifs/compressed/wind_1-export-export.gif");
+  }
+  52.82% {
+    background-image: url("../assets/gifs/compressed/wind_2-export-export.gif");
+  }
+  55.60% {
+    background-image: url("../assets/gifs/compressed/wind_4-export-export.gif");
+  }
+  58.38% {
+    background-image: url("../assets/gifs/compressed/wind_5-export-export.gif");
+  }
+  61.16% {
+    background-image: url("../assets/gifs/compressed/wind_6-export-export.gif");
+  }
+  63.94% {
+    background-image: url("../assets/gifs/compressed/wind_7-export-export.gif");
+  }
+  66.72% {
+    background-image: url("../assets/gifs/compressed/wind_8-export-export.gif");
+  }
+  69.50% {
+    background-image: url("../assets/gifs/compressed/wind_9-export-export.gif");
+  }
+  72.28% {
+    background-image: url("../assets/gifs/compressed/wind_10-export-export.gif");
+  }
+  75.06% {
+    background-image: url("../assets/gifs/void3.gif");
+  }
+  77.84% {
+    background-image: url("../assets/gifs/void4.gif");
+  }
+  80.62% {
+    background-image: url("../assets/gifs/void5.gif");
+  }
+  83.40% {
+    background-image: url("../assets/gifs/void1.gif");
+  }
+  86.18% {
+    background-image: url("../assets/gifs/compressed/wind_7-export-export.gif");
+  }
+  88.96% {
+    background-image: url("../assets/gifs/void6.gif");
+  }
+  91.74% {
+    background-image: url("../assets/gifs/void2.gif");
+  }
+  94.52% {
+    background-image: url("../assets/gifs/compressed/wind_9-export-export.gif");
+  }
+  97.30% {
+    background-image: url("../assets/gifs/void7.gif");
+  }
+  100% {
+    background-image: url("../assets/gifs/compressed/wind_1-export-export.gif");
+  }
 }
+
 
 #void {
   display: flex;
@@ -50,5 +135,5 @@
   background-position: center;
   opacity: 0.5; /* Adjust the opacity value as needed */
   z-index: -1;
-  animation: cycleBackground 15s infinite; /* 15s duration, infinite loop */
+  animation: cycleBackground 1200s infinite; /* 15s duration, infinite loop */
 }
